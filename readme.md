@@ -16,10 +16,10 @@ GeSHi-highlighted code.
 Installation
 ------------
 
-# Use this package with CodeIgniter v1.7.3 or newer
-# Download this package, and copy the geshi_hook.php file and geshi folder into your application/hooks folder.
-# Ensure that you have set $config['enable_hooks'] = TRUE; in your application/config/config.php file.
-# Insert a hook into the application/config/hooks.php file (copy the code below):
+* Use this package with CodeIgniter v1.7.3 or newer
+* Download this package, and copy the geshi_hook.php file and geshi folder into your application/hooks folder.
+* Ensure that you have set $config['enable_hooks'] = TRUE; in your application/config/config.php file.
+* Insert a hook into the application/config/hooks.php file (copy the code below):
 
 /* ----------------------------------------------------- */
 /* -- GeSHi Plugin Hook -- */
