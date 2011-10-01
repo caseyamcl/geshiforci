@@ -1,15 +1,3 @@
-GeSHi Syntax Highlighter for CodeIgniter.
-
- - GeSHi is licensed under the GNU GPLv.2 (http://qbnz.com/highlighter/license.php)
-
- - This plugin for CodeIgniter was written by Casey McLaughlin
- 
- - Installation instructions for this plugin are at http://www.caseyamcl.com/resources/geshiForCI
-
-
-
-
-
 GeSHi Syntax Highlighter for CodeIgniter
 ========================================
 
@@ -17,7 +5,7 @@ About
 -----
 
 * by Casey McLaughlin  (http://www.caseyamcl.com)
-* Last Stable Version: 1.1 released 2011 Oct 1
+* Last Stable Version: 2.0 released 2011 Oct 1
 * Check for updates at: http://github.com/caseyamcl/geshiforci
 
 This is a quick and simple plugin-hook for CodeIgniter that will convert
