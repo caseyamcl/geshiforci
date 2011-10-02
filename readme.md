@@ -31,7 +31,7 @@ Highlight code using the $this->geshilib->highlight() method (substitute 'sql' f
 
     $this->geshilib->highlight($some_sourcecode_string, 'sql');
 
-For more information, including automating syntax highlighting for your output, refer to the main documentation.
+For more information, refer to the user_guide/index.html file included in the distribution.
 
 License
 -------
