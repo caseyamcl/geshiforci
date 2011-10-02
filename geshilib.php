@@ -132,17 +132,17 @@ class Geshilib
   // ------------------------------------------------------------------------	
 	
 	/**
-	 * Filter CI Output
+	 * Override CI Output, adding Syntax Highlighting for <sourcecode> blocks
 	 * 
 	 * Runs the GeSHi <sourcecode>...</sourecode> filter on CI output, and
 	 * optionally displays the output using CI's output class
 	 * 
 	 * Use this function if you want to use the display_override hook
 	 * 
-	 * @param type $params 
+	 * @param array $params 
 	 * @param boolean $display
 	 */
-	public function filter_ci_output($params = NULL, $display = TRUE)
+	public function geshi_display_override($params = NULL, $display = TRUE)
 	{
     //Get the output from CI, run the filter, and reset it
 		$ci_output = $this->ci->output->get_output();
@@ -226,6 +226,11 @@ class Geshilib
 			'default_language'
 		);
 		
+		//Other things that should not be in the array
+		$illegals = array(
+			'parse_code', 'error', 'get_stylesheet'
+		);
+				
 		//Remove the mapped items
 		foreach($mappings as $mapping)
 		{
@@ -233,6 +238,17 @@ class Geshilib
 			{
 				$this->$mapping = $params[$mapping];
 				unset($params[$mapping]);
+			}
+		}		
+		
+		//Remove illegal values
+		foreach($illegals as $illegal)
+		{
+			if (isset($params[$illegal]))
+			{
+				if ( ! $this->fail_gracefully)
+					throw new Exception("Cannot use '$illegal' paramter in geshilib!");				
+				unset($params[$illegal]);
 			}
 		}		
 		
