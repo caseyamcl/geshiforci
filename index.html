@@ -1,0 +1,342 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>GeSHi for CI Documentation</title>
+
+<link rel='stylesheet' type='text/css' media='all' href='./userguide.css' />
+
+<meta http-equiv='expires' content='-1' />
+<meta http-equiv= 'pragma' content='no-cache' />
+<meta name='robots' content='all' />
+
+</head>
+<body>
+
+<!-- START NAVIGATION -->
+<div id="nav"><div id="nav_inner"></div></div>
+<div id="nav2"><a name="top">&nbsp;</a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><h1>Project Title</h1></td>
+<td id="breadcrumb_right"><a href="#">Right Breadcrumb</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+
+
+<!-- START BREADCRUMB -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="http://github.com/caseyamcl/geshiforci" title="Github Page">GeSHi For CI</a> &nbsp;&#8250;&nbsp;
+User Guide
+</table>
+<!-- END BREADCRUMB -->
+
+<br clear="all" />
+
+
+<!-- START CONTENT -->
+<div id="content">
+
+
+<h1>GeSHi for CodeIgniter</h1>
+
+<p>
+	GeSHi is a syntax-highlighter that provides server-side highlighting for over 100 programming languages.
+	This library provides a simple, clean GeSHi API tailored for use in CodeIgniter projects.
+</p>
+
+<p>Features:</p>
+
+<ul>
+	<li>Works with CodeIgniter v1.7.3 and newer</li>
+	<li>Highlight any string on-the-fly using GeSHi</li>
+	<li>GeSHi library is included.  No external dependencies</li>
+	<li>Easy to use with the <var>display_override</var> hook for automated highlighting of select blocks inside view files</li>
+	<li>Ability to drop-in newer (or older) versions of GeSHi with this library</li>
+</ul>
+
+<h2>Installation</h2>
+
+<ol>
+	<li>Download the latest version from <a href="http://github.com/caseyamcl/geshiforci" title="Github Page">the Github page</a></li>
+	<li>Copy the <var>geshilib.php</var> file and <var>geshi</var> folder into your <dfn>application/libraries</dfn> folder.</li>
+</ol>
+
+<h2>Loading the Library</h2>
+
+<p>Like any other library in CodeIgniter, use the <dfn>$this->load->library</dfn> function to load geshilib:</p>
+
+<code>
+	$this->load->library('geshilib');
+</code>
+
+<h2>Basic Syntax Highlighting</h2>
+
+<p>Once the library is loaded, you can use GeSHi to highlight any string by calling the <dfn>$this->geshilib->highlight</dfn> method.</p>
+
+<p>For example, to highlight a string <var>$mycode</var>, which contains SQL code:
+
+<code>
+	$this->geshilib->highlight($mycode, 'sql');
+</code>
+	
+<p>
+	The second argument (<em>'sql'</em>) is the language you want to use for highlighting.  Any
+	language that GeSHi supports is valid.  Refer to the <a href="http://qbnz.com/highlighter/" title="GeSHi Homepage">GeSHi Homepage</a>
+	for a list of supported langauges (hint: they're pretty much all supported).
+</p>
+	
+<p>
+	If you don't specify a second argument, GeSHiLib will highlight your code using simple
+	BASH highlighting.
+</p>
+
+<p>
+	The <dfn>$this->geshilib->filter</dfn> method accepts a third argument, <var>$params</var>.  See "Setting Paramters"
+	below for more information regarding this argument.
+</p>
+	
+	
+<h2>Highlighting Code Blocks inside of HTML</h2>
+
+<p>
+	GeSHi lib can parse HTML output and look for code to highlight.  Place the code you wish to
+	highlight between <em><var>&lt;sourcecode&gt;...&lt;/sourcecode&gt;</var></em> tags within your HTML code, and
+	then send the HTML to the <dfn>$this->geshilib->filter</dfn> method:
+</p>
+
+<pre>$my_html = "&lt;p&gt;Some regular content&lt;/p&gt;&lt;sourcecode&gt;$x = "Hello, World!";&lt;/sourcecode&gt;";
+
+$highlighted = $this->geshilib->filter($my_html);</pre>
+
+<p>
+	To specify a language, add the <em>language</em> attribute to the sourcecode tag:
+</p>
+
+<pre>$my_html = "&lt;p&gt;Some regular content&lt;/p&gt;&lt;sourcecode <dfn>language='<var>php</var></dfn>'&gt;$x = "Hello, World!";&lt;/sourcecode&gt;";
+
+$highlighted = $this->geshilib->filter($my_html);</pre>
+
+<p>
+	Don't worry that <em>&lt;sourcecode&gt;...&lt;/sourcecode&gt;</em> tags aren't valid HTML.  GeSHi will conver them
+	to <em>&lt;pre&gt;...&lt;/pre&gt;</em> tags.
+</p>
+
+<p>
+	The <dfn>$this->geshilib->filter</dfn> method also accepts a second argument, <var>$params</var>.  See "Setting Paramaters"
+	below for more information regarding this argument.
+</p>
+
+<h2>Automating GeshiLib with a Output Hook</h2>
+	
+<p>
+	If you want Geshilib to automatically highlight all content contained within
+	<em>&lt;sourcecode&gt;...&lt;/sourcecode&gt;</em> tags inside of your views,
+	you can create a hook.
+</p>
+
+<ol>
+	<li>
+		Ensure that hooks are enabled in the <dfn>application/config/config.php</dfn> file:
+		<code>$config['enable_hooks'] = TRUE;</code>
+	</li>
+	<li>
+		Add the following code to your <dfn>application/config/hooks.php</dfn> file:
+		<pre>$hook['display_override'] = array(
+	'class' => 'Geshilib',
+	'function' => 'geshi_display_override',
+	'filename' => 'geshilib.php',
+	'filepath' => 'libraries',
+	'params' => array());</pre>
+	</li>
+</ol>
+
+<h2>Manually Finding and Highlighting Code in CI View Files</h2>
+
+<p>
+	To automatically find and highlight all <em><var>&lt;sourcecode&gt;...&lt;/sourcecode&gt;</var></em>
+	inside of a CodeIgniter view file, load the view into a string using <dfn>$this->load->view</dfn>,
+	run <dfn>$this->geshilib->filter</dfn> on it, and manually output the results
+	using <dfn>$this->output->set_output</dfn>:
+</p>
+
+<pre>$vdata = $this->load->view('some_view', $some_data);
+$vdata = $this->geshilib->filter($vdata);
+$this->output->set_output($vdata);</pre>
+
+
+<h2>Setting Parameters</h2>
+
+<p>
+	GeSHi provides several options for customizing highlighted code.  You can specify these parameters
+	by adding the <var>$params</var> array argument to the <dfn>highlight</dfn> or <dfn>filter</dfn> methods,
+	or by specifying content for the <em>params</em> array in the <var>display_override</var> hook.
+</p>
+
+<p>
+	The <var>$params</var> variable is an associative array.  The key is the parameter name, and the
+	value is an array of options for the parameter. 	Parameters in the <var>$params</var> array are the same as methods in the GeSHi object.
+	Almost any public method in a GeSHi object can be the a key in the <var>$params</var> array.  Exceptions
+	include the <em>error()</em>, <em>parse_code()</em>, and <em>get_stylesheet()</em> methods.  Values in the
+	<var>$params</var> array are the arguments that the GeSHi object method accepts.
+</p>
+
+<p>
+	For example, the GesHi object contains a public method, <dfn>enable_line_numbers()</dfn> that accepts two arguments:
+	a GeSHi constant, and an optional integer.  To use this method, you would set your parameters array as follows:
+</p>
+
+<pre>$params = array(
+	'enable_line_numbers' => array(GESHI_NORMAL_LINE_NUMBERS, 15)
+);
+
+$this->geshilib->highlight($some_code, $params);
+</pre>
+
+<p>
+	For a full documentation of methods that the GeSHi object supports, refer to 
+	the <a href="qbnz.com/highlighter/geshi-doc.html" title="GeSHi Documentation">GeSHi Documentation</a>.
+</p>
+
+<h3>Some Common Parameters</h3>
+
+<p>
+	Note: This list is not comprehensive.  Refer to the
+	<a href="qbnz.com/highlighter/geshi-doc.html" title="GeSHi Documentation">GeSHi Documentation</a>
+	for all methods/parameters.
+</p>
+
+<p class="important">
+	<strong>Note:</strong> This parameters list refers to <a href="#" title="#">GeSHi v1.0.8.10 API</a>.
+	If you are using a different version of GeSHi with this library, this API may be different.
+</p>
+
+<table cellpadding="0" cellspacing="1" border="0" style="width:100%" class="tableborder">
+<tr>
+	<th>Parameter</th>
+	<th>Options</th>
+	<th>Description</th>
+</tr>
+<tr>
+	<td class="td"><strong>set_header_type</strong></td>
+	<td class="td">GESHI_HEADER_DIV<br/>GESHI_HEADER_PRE<br/>GESHI_HEADER_PRE_VALID<br/>GESHI_HEADER_PRE_TABLE<br/>GESHI_HEADER_NONE</td>
+	<td class="td">Sets the header type for highlighted sourcecode.</td>
+</tr>
+<tr>
+	<td class="td"><strong>enable_line_numbers</strong></td>
+	<td class="td">GESHI_NORMAL_LINE_NUMBERS<br/>GESHI_FANCY_LINE_NUMBERS<br/>GESHI_NO_LINE_NUMBERS</td>
+	<td class="td"></td>
+</tr><tr>
+	<td class="td"><strong>set_line_style</strong></td>
+	<td class="td"><em>Any desired CSS code</td>
+	<td class="td"></td>
+</tr><tr>
+	<td class="td"><strong>start_line_numbers_at</strong></td>
+	<td class="td"><em>Any positive integer</em></td>
+	<td class="td"></td>
+</tr><tr>
+	<td class="td"><strong>enable_classes</strong></td>
+	<td class="td">TRUE to enable classes<br/>FALSE to disable classes</td>
+	<td class="td"></td>
+</tr><tr>
+	<td class="td"><strong>set_overall_class</strong></td>
+	<td class="td"><em>desired class name</em></td>
+	<td class="td"></td>
+</tr><tr>
+	<td class="td"><strong>set_overall_id</strong></td>
+	<td class="td"><em>desired ID</em></td>
+	<td class="td"></td>
+</tr><tr>
+	<td class="td"><strong>set_overall_style</strong></td>
+	<td class="td"><em>desired CSS code</em></td>
+	<td class="td"></td>
+</tr><tr>
+	<td class="td"><strong>set_line_style</strong></td>
+	<td class="td"><em>desired even line style</em>, <em>desired odd line style</em></td>
+	<td class="td"></td>
+</tr><tr>
+	<td class="td"><strong>set_tab_width</strong></td>
+	<td class="td"><em>any positive integer</em></td>
+	<td class="td"></td>
+</tr><tr>
+	<td class="td"><strong>enable_ids</strong></td>
+	<td class="td">TRUE to enable ID's<br />FALSE to disable ID's</td>
+	<td class="td"></td>
+</tr>
+</table>
+
+<h3>Other Parameters</h3>
+
+<p>
+	The following parameters apply to the geshilib library, not GeSHi itself:
+</p>
+
+<table cellpadding="0" cellspacing="1" border="0" style="width:100%" class="tableborder">
+<tr>
+	<th>Parameter</th>
+	<th>Default</th>
+	<th>Options</th>
+	<th>Description</th>
+</tr>
+<tr>
+	<td class="td"><strong>fail_gracefully</strong></td>
+	<td class="td">TRUE</td>
+	<td class="td">TRUE or FALSE</td>
+	<td class="td">If FALSE, GeSHi will throw exceptions if it encounters an error during highlighting.  Useful for debugging.</td>
+</tr>
+<tr>
+	<td class="td"><strong>default_language</strong></td>
+	<td class="td">BASH</td>
+	<td class="td"><em>Any GeSHi-supported Language</em></td>
+	<td class="td">Set the default language in case none is specified.</td>
+</tr></table>
+
+<h3>Examples of Setting Parameters</h3>
+
+<p>The following example enables line numbers and sets tabs to 3 characters:</p>
+
+<pre>$params = array('enable_line_numbers' => array(GESHI_NORMAL_LINE_NUMBERS), 'set_tab_width' => array('3'));
+
+$this->geshilib->highlight("echo 'Hello World';", 'php', $params);</pre>
+
+<p>
+	The following example enable line numbers and adds an overall class to GeSHi output for
+	all <em><var>&lt;sourcecode&gt;...&lt;/sourcecode&gt;</var></em> instances encountered
+	when using the display_override hook:
+</p>
+
+<pre>$hook['display_override'] = array(
+	'class' => 'Geshilib',
+	'function' => 'geshi_display_override',
+	'filename' => 'geshilib.php',
+	'filepath' => 'libraries',
+	'params' => array(
+		'enable_line_numbers' => array('GESHI_FANCY_LINE_NUMBERS', 10), 'set_overall_class' => array('sourcecode')
+	));</pre>
+
+<p class='important'>
+	<strong>Note:</strong> Because of the way CodeIgniter  loads libraries, you must refer to
+	all GeSHi constants as strings inside your <dfn>application/config/hooks.php</dfn> file.
+	For example, the constant <var>GESHI_FANCY_LINE_NUMBERS</var> would
+	become the string <dfn>'GESHI_FANCY_LINE_NUMBERS'</dfn> inside your parameters array.
+</p>
+
+
+<div id="footer">
+	<p>
+		<a href="http://github.com/caseyamcl/geshiforci" title="GeSHi for CI Github Page">GeSHi for CI</a>
+		&nbsp;&nbsp;
+		BSD License
+		&nbsp;&nbsp;
+		Casey McLaughlin
+	</p>
+</div>
+
+</body>
+</html>
