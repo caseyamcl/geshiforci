@@ -31,7 +31,7 @@ Highlight code using the $this->geshilib->highlight() method (substitute 'sql' f
 
     $this->geshilib->highlight($some_sourcecode_string, 'sql');
 
-For more information, refer to the user_guide/index.html file included in the distribution.
+For more information, refer to [http://caseyamcl.github.com/geshiforci/](http://caseyamcl.github.com/geshiforci/ "Documentation")
 
 License
 -------
